@@ -120,7 +120,7 @@ O relatório completo de completude por coluna está em [`docs/qualidade_dados.m
 
 ```bash
 # 1. Clonar o repositório
-git clone https://github.com/yInvictus1/Fossil-Dashboard.git
+git clone https://github.com/yDiegoRosa/Fossil-Dashboard.git
 cd Fossil-Dashboard
 
 # 2. Criar e ativar o ambiente virtual
@@ -267,7 +267,7 @@ O Streamlit Cloud instala só o `requirements.txt`, que traz apenas o necessári
 
 ## 👤 Autor
 
-**Diego Rosa**: engenheiro de IA, estudante de Análise e Desenvolvimento de Sistemas
+**Diego Rosa**: Cientista de dados, estudante de Análise e Desenvolvimento de Sistemas
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-rdiegosilva-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/rdiegosilva)
 [![GitHub](https://img.shields.io/badge/GitHub-yDiegoRosa-181717?logo=github&logoColor=white)](https://github.com/yDiegoRosa)
