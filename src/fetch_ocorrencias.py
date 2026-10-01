@@ -11,7 +11,8 @@ import os
 import requests
 
 BASE_URL = "https://paleobiodb.org/data1.2"
-OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "data", "raw")
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+OUTPUT_DIR = os.path.join(PROJECT_ROOT, "data", "raw")
 OUTPUT_FILE = os.path.join(OUTPUT_DIR, "ocorrencias.json")
 
 PARAMS = {

@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Ambientes virtuais
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Streamlit (segredos locais; o config.toml é versionado)
+.streamlit/secrets.toml
+
+# Editor / SO
+.DS_Store
+Thumbs.db

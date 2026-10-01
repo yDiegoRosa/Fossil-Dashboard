@@ -1,0 +1,4 @@
+# O CSS do app.py pinta o fundo de escuro; sem forçar o tema escuro aqui,
+# quem usa o sistema em modo claro recebe texto escuro sobre fundo escuro
+[theme]
+base = "dark"

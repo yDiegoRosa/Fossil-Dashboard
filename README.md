@@ -4,7 +4,7 @@
 
 ### Onde os dinossauros foram encontrados? Um mapa interativo de 22 mil fósseis, 95 países e 190 milhões de anos
 
-[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org)
+[![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.57%2B-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io)
 [![Plotly](https://img.shields.io/badge/Plotly-6.7%2B-3F4F75?logo=plotly&logoColor=white)](https://plotly.com/python/)
 [![Folium](https://img.shields.io/badge/Folium-0.20%2B-77B829?logo=leaflet&logoColor=white)](https://python-visualization.github.io/folium/)
@@ -62,13 +62,13 @@ O projeto cobre o ciclo completo de análise de dados:
 
 | Aba | O que mostra | Tecnologia |
 |-----|-------------|-----------|
-| 🌍 **Mapa** | Mapa de calor global + clusters clicáveis com detalhes de cada fóssil | Folium · HeatMap · MarkerCluster |
+| 🌍 **Mapa** | Mapa de calor global + clusters clicáveis com detalhes de cada sítio de escavação; enquadra automaticamente o país ou continente filtrado | Folium · HeatMap · FastMarkerCluster · Esri / OSM |
 | ⏳ **Timeline** | Diversidade de espécies por período, empilhada pelas 10 principais famílias, com marcação da extinção K-Pg | Plotly · Barras empilhadas |
 | 🏆 **Países & Clados** | Top 15 países com mais registros + treemap família → táxon | Plotly · Barras horizontais · Treemap |
 | 📅 **Gêneros** | Surgimento e desaparecimento dos 30 gêneros mais registrados | Plotly · Gantt |
 
 **Filtros na sidebar** (combináveis): período geológico · continente · família taxonômica · país.
-Os cards de resumo (registros, táxons, países e famílias) se atualizam a cada filtro.
+Os cards de resumo no topo (registros, espécies, países e famílias) se atualizam a cada filtro, e só a aba aberta é recalculada.
 
 ---
 
@@ -113,7 +113,7 @@ O relatório completo de completude por coluna está em [`docs/qualidade_dados.m
 
 ### Pré-requisitos
 
-- Python 3.10 ou superior
+- Python 3.11 ou superior
 - Internet apenas se quiser recoletar os dados (o dataset processado já está no repositório)
 
 ### Instalação
@@ -142,7 +142,10 @@ Acesse `http://localhost:8501`, aplique filtros na sidebar e explore as abas.
 
 ### (Opcional) Recoletar e reprocessar os dados
 
+A coleta e o processamento usam dependências extras (geocodificação reversa), que o app não precisa:
+
 ```bash
+pip install -r requirements-pipeline.txt
 python src/fetch_pbdb.py        # ocorrências → data/raw/ocorrencias_completas.json
 python src/fetch_taxonomia.py   # taxonomia   → data/raw/taxonomia.json
 python src/process.py           # limpeza     → data/processed/ocorrencias_final.csv + docs/qualidade_dados.md
@@ -173,8 +176,11 @@ print(df[["tna", "lat", "lng", "oei"]].head(10))
 Fossil-Dashboard/
 ├── app.py                        # app principal Streamlit
 ├── coleta.py                     # exploração inicial dos endpoints da PBDB
-├── requirements.txt
+├── requirements.txt              # dependências do app (usado no deploy)
+├── requirements-pipeline.txt     # + dependências da coleta e do processamento
 ├── LICENSE
+├── .streamlit/
+│   └── config.toml               # tema escuro fixo
 ├── data/
 │   ├── raw/
 │   │   ├── ocorrencias_completas.json   # ocorrências coletadas por período (entrada do pipeline)
@@ -197,6 +203,7 @@ Fossil-Dashboard/
     ├── fetch_sitios.py           # coleta de sítios (formação geológica e ambiente)
     ├── fetch_ocorrencias.py      # coleta simples, substituída pelo fetch_pbdb.py
     ├── process.py                # limpeza, enriquecimento e relatório
+    ├── traducoes.py              # nomes em português de períodos, continentes e países
     └── charts.py                 # uma função por visualização
 ```
 
@@ -217,6 +224,8 @@ Fossil-Dashboard/
 | `cnm` | PBDB | Nome do sítio de coleta |
 | `era` | **derivada** | Período normalizado: Triassic, Jurassic ou Cretaceous |
 | `cc` / `pais` / `continente` | **derivadas** | País e continente via geocodificação reversa |
+
+Período, país e continente ficam em inglês no CSV (como vêm da PBDB e do pycountry) e são traduzidos ao carregar o app ([`src/traducoes.py`](src/traducoes.py)).
 | `familia` | **derivada** | Família taxonômica resolvida pela árvore da PBDB |
 
 ---
@@ -240,7 +249,10 @@ O app foi pensado para o **Streamlit Community Cloud**, sem banco de dados nem c
 
 1. Faça fork deste repositório
 2. Acesse [share.streamlit.io](https://share.streamlit.io) e conecte sua conta do GitHub
-3. Selecione o repositório, defina `app.py` como arquivo principal e clique em **Deploy**
+3. Selecione o repositório e defina `app.py` como arquivo principal
+4. Em **Advanced settings**, escolha Python 3.11 ou superior e clique em **Deploy**
+
+O Streamlit Cloud instala só o `requirements.txt`, que traz apenas o necessário para o app.
 
 ---
 

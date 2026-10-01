@@ -19,12 +19,14 @@ import streamlit as st
 from streamlit_folium import st_folium
 
 from src.charts import (
+    ERA_ORDER,
     criar_mapa_calor,
     criar_ranking_paises,
     criar_timeline_diversidade,
     criar_timeline_generos,
     criar_treemap_clados,
 )
+from src.traducoes import ERAS, ordenar, traduzir
 
 # ── Configuracao da pagina ──────────────────────────────────────────
 st.set_page_config(
@@ -42,11 +44,19 @@ DATA_FILE = ROOT / "data" / "processed" / "ocorrencias_final.csv"
 # ── Carregamento de dados (cacheado) ────────────────────────────────
 @st.cache_data(ttl=3600)
 def carregar_dados() -> pd.DataFrame:
-    """Carrega o dataset final processado. Cacheado por sessao."""
+    """
+    Carrega o dataset final processado, com periodos, continentes e
+    paises traduzidos para exibicao. Cacheado por sessao.
+    """
     df = pd.read_csv(DATA_FILE)
     df["lat"] = df["lat"].astype(float)
     df["lng"] = df["lng"].astype(float)
-    return df
+    return traduzir(df)
+
+
+def fmt_int(n: int) -> str:
+    """Inteiro com separador de milhar brasileiro (ex.: 22.064)."""
+    return f"{n:,}".replace(",", ".")
 
 
 # ── CSS customizado ─────────────────────────────────────────────────
@@ -115,7 +125,7 @@ df_completo = carregar_dados()
 st.markdown("""
 <div class="main-title">
     <h1>Dino Fossil Dashboard</h1>
-    <p>Visualizacao interativa de fosseis de dinossauros ao redor do mundo</p>
+    <p>Visualização interativa de fósseis de dinossauros ao redor do mundo</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -126,45 +136,46 @@ st.divider()
 # =====================================================================
 with st.sidebar:
     st.markdown("## :mag: Filtros")
-    st.caption("Selecione os criterios para filtrar os dados.")
+    st.caption("Selecione os critérios para filtrar os dados.")
 
-    # Era Geologica
-    eras_disponiveis = sorted(df_completo["era"].unique().tolist())
+    # Era Geologica, em ordem cronologica
+    eras_disponiveis = [e for e in ERA_ORDER if e in set(df_completo["era"])]
     eras_selecionadas = st.multiselect(
-        "Era Geologica",
+        "Período Geológico",
         options=eras_disponiveis,
-        default=[e for e in ["Triassic", "Jurassic", "Cretaceous"] if e in eras_disponiveis],
-        help="Filtre por uma ou mais eras geologicas.",
+        default=[e for e in ERAS.values() if e in eras_disponiveis],
+        placeholder="Todos os períodos",
+        help="Filtre por um ou mais períodos geológicos.",
     )
 
     # Continente
-    continentes_disponiveis = sorted(df_completo["continente"].unique().tolist())
+    continentes_disponiveis = ordenar(df_completo["continente"].unique())
     continentes_selecionados = st.multiselect(
         "Continente",
         options=continentes_disponiveis,
         default=continentes_disponiveis,
+        placeholder="Todos os continentes",
         help="Filtre por continente.",
     )
 
     # Familia
     familias_disponiveis = sorted(df_completo["familia"].unique().tolist())
     familias_selecionadas = st.multiselect(
-        "Familia Taxonomica",
+        "Família Taxonômica",
         options=familias_disponiveis,
         default=[],
-        help="Deixe vazio para incluir todas as familias.",
+        placeholder="Todas as famílias",
+        help="Deixe vazio para incluir todas as famílias.",
     )
 
     # Pais
-    paises_disponiveis = ["Todos"] + sorted(df_completo["pais"].unique().tolist())
+    paises_disponiveis = ["Todos"] + ordenar(df_completo["pais"].unique())
     pais_selecionado = st.selectbox(
-        "Pais",
+        "País",
         options=paises_disponiveis,
         index=0,
-        help="Filtre por um pais especifico.",
+        help="Filtre por um país específico.",
     )
-
-    st.divider()
 
 # ── Aplicar filtros ─────────────────────────────────────────────────
 df_filtrado = df_completo.copy()
@@ -182,12 +193,23 @@ if pais_selecionado != "Todos":
     df_filtrado = df_filtrado[df_filtrado["pais"] == pais_selecionado]
 
 # ── Metricas no topo ────────────────────────────────────────────────
-with st.sidebar:
-    st.markdown("### :bar_chart: Resumo")
-    st.metric("Registros", f"{len(df_filtrado):,}")
-    st.metric("Especies", f"{df_filtrado['tna'].nunique():,}")
-    st.metric("Paises", f"{df_filtrado['pais'].nunique():,}")
-    st.metric("Familias", f"{df_filtrado['familia'].nunique():,}")
+card_registros, card_especies, card_paises, card_familias = st.columns(4)
+card_registros.metric(
+    "Registros",
+    fmt_int(len(df_filtrado)),
+    help="Ocorrências fósseis que atendem aos filtros.",
+)
+card_especies.metric(
+    "Espécies",
+    fmt_int(df_filtrado.loc[df_filtrado["rnk"] == 3, "tna"].nunique()),
+    help="Táxons identificados em nível de espécie (rnk = 3).",
+)
+card_paises.metric("Países", fmt_int(df_filtrado["pais"].nunique()))
+card_familias.metric(
+    "Famílias",
+    fmt_int(df_filtrado.loc[df_filtrado["familia"] != "Desconhecido", "familia"].nunique()),
+    help="Famílias taxonômicas identificadas; registros sem família não entram na conta.",
+)
 
 # ── Verificar dados ─────────────────────────────────────────────────
 if df_filtrado.empty:
@@ -200,52 +222,64 @@ if df_filtrado.empty:
 # =====================================================================
 # ABAS DE VISUALIZACAO (Tarefa 5.3)
 # =====================================================================
-tab_mapa, tab_timeline, tab_paises, tab_generos = st.tabs([
-    ":earth_americas: Mapa",
-    ":hourglass_flowing_sand: Timeline",
-    ":trophy: Paises & Clados",
-    ":calendar: Generos",
-])
+# on_change="rerun": so a aba aberta e desenhada. Sem isso as quatro abas
+# rodam a cada filtro, e o mapa criado numa aba oculta ficava com altura 0
+# (aparecia em branco ao voltar para ele)
+tab_mapa, tab_timeline, tab_paises, tab_generos = st.tabs(
+    [
+        ":earth_americas: Mapa",
+        ":hourglass_flowing_sand: Timeline",
+        ":trophy: Países & Clados",
+        ":calendar: Gêneros",
+    ],
+    key="aba",
+    on_change="rerun",
+)
 
 # ── Aba 1: Mapa de calor ────────────────────────────────────────────
-with tab_mapa:
-    st.markdown("### :world_map: Mapa de Calor de Ocorrencias Fosseis")
-    st.caption(
-        f"Exibindo {len(df_filtrado):,} registros. "
-        "Clique nos clusters para explorar os pontos individuais."
-    )
-    mapa = criar_mapa_calor(df_filtrado)
-    st_folium(mapa, width=None, height=550, returned_objects=[])
+if tab_mapa.open:
+    with tab_mapa:
+        st.markdown("### :world_map: Mapa de Calor de Ocorrências Fósseis")
+        st.caption(
+            f"Exibindo {fmt_int(len(df_filtrado))} registros. "
+            "Os números nos clusters somam as ocorrências; "
+            "clique para aproximar e veja os detalhes de cada sítio."
+        )
+        mapa = criar_mapa_calor(df_filtrado)
+        st_folium(mapa, width=None, height=550, returned_objects=[])
 
 # ── Aba 2: Timeline de diversidade ──────────────────────────────────
-with tab_timeline:
-    st.markdown("### :chart_with_upwards_trend: Diversidade por Era Geologica")
-    fig_timeline = criar_timeline_diversidade(df_filtrado)
-    st.plotly_chart(fig_timeline, width="stretch", key="timeline")
+if tab_timeline.open:
+    with tab_timeline:
+        st.markdown("### :chart_with_upwards_trend: Diversidade por Período Geológico")
+        fig_timeline = criar_timeline_diversidade(df_filtrado)
+        st.plotly_chart(fig_timeline, width="stretch", key="timeline")
 
 # ── Aba 3: Paises + Treemap ─────────────────────────────────────────
-with tab_paises:
-    col_ranking, col_treemap = st.columns(2)
+if tab_paises.open:
+    with tab_paises:
+        col_ranking, col_treemap = st.columns(2)
 
-    with col_ranking:
-        st.markdown("### :trophy: Ranking de Paises")
-        fig_ranking = criar_ranking_paises(df_filtrado)
-        st.plotly_chart(fig_ranking, width="stretch", key="ranking")
+        with col_ranking:
+            st.markdown("### :trophy: Ranking de Países")
+            fig_ranking = criar_ranking_paises(df_filtrado)
+            st.plotly_chart(fig_ranking, width="stretch", key="ranking")
 
-    with col_treemap:
-        st.markdown("### :deciduous_tree: Treemap Taxonomico")
-        fig_treemap = criar_treemap_clados(df_filtrado)
-        st.plotly_chart(fig_treemap, width="stretch", key="treemap")
+        with col_treemap:
+            st.markdown("### :deciduous_tree: Treemap Taxonômico")
+            fig_treemap = criar_treemap_clados(df_filtrado)
+            st.plotly_chart(fig_treemap, width="stretch", key="treemap")
 
 # ── Aba 4: Timeline de generos ──────────────────────────────────────
-with tab_generos:
-    st.markdown("### :dna: Surgimento e Extincao de Generos")
-    st.caption(
-        "Os 30 generos com mais ocorrencias no registro fossil. "
-        "Linhas tracejadas indicam os limites de cada era."
-    )
-    fig_generos = criar_timeline_generos(df_filtrado)
-    st.plotly_chart(fig_generos, width="stretch", key="generos")
+if tab_generos.open:
+    with tab_generos:
+        st.markdown("### :dna: Surgimento e Extinção de Gêneros")
+        st.caption(
+            "Os 30 gêneros com mais ocorrências no registro fóssil. "
+            "Linhas tracejadas indicam os limites de cada período."
+        )
+        fig_generos = criar_timeline_generos(df_filtrado)
+        st.plotly_chart(fig_generos, width="stretch", key="generos")
 
 # ── Footer ──────────────────────────────────────────────────────────
 st.divider()
