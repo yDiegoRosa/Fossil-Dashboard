@@ -12,6 +12,10 @@
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://dino-fossil-dashboard.streamlit.app/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22C55E.svg)](LICENSE)
 
+<<<<<<< HEAD
+=======
+<!-- DEMO: depois do deploy, troque "#demo" abaixo pelo link do Streamlit Cloud (https://<seu-app>.streamlit.app) -->
+>>>>>>> 48cb84f09916b0987bcf724cb9a1286c975c9bf3
 **[🔴 Demo ao vivo](https://dino-fossil-dashboard.streamlit.app/) · [💡 Destaques](#-destaques-dos-dados) · [📊 Visualizações](#-visualizações) · [⚙️ Pipeline](#️-pipeline-de-dados) · [⚡ Como rodar](#-como-rodar)**
 
 </div>
@@ -24,12 +28,15 @@
      (ou, no editor web do GitHub, arraste o .mp4 para cá — ele gera o link do vídeo automaticamente) -->
 <!-- ![Demonstração do Dino Fossil Dashboard](docs/demo.gif) -->
 
+<<<<<<< HEAD
 > 🔴 **App publicado no Streamlit Cloud:** [dino-fossil-dashboard.streamlit.app](https://dino-fossil-dashboard.streamlit.app/)
 >
 > Prefere rodar localmente? Veja [Como rodar](#-como-rodar).
 
 ---
 
+=======
+>>>>>>> 48cb84f09916b0987bcf724cb9a1286c975c9bf3
 ## Sobre o projeto
 
 App interativo em **Streamlit** alimentado por dados reais da **[Paleobiology Database (PBDB)](https://paleobiodb.org)**, uma base científica colaborativa, pública e sem necessidade de autenticação.
@@ -122,7 +129,7 @@ O relatório completo de completude por coluna está em [`docs/qualidade_dados.m
 
 ```bash
 # 1. Clonar o repositório
-git clone https://github.com/yInvictus1/Fossil-Dashboard.git
+git clone https://github.com/yDiegoRosa/Fossil-Dashboard.git
 cd Fossil-Dashboard
 
 # 2. Criar e ativar o ambiente virtual
@@ -269,7 +276,7 @@ O Streamlit Cloud instala só o `requirements.txt`, que traz apenas o necessári
 
 ## 👤 Autor
 
-**Diego Rosa**: engenheiro de IA, estudante de Análise e Desenvolvimento de Sistemas
+**Diego Rosa**: Cientista de dados, estudante de Análise e Desenvolvimento de Sistemas
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-rdiegosilva-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/rdiegosilva)
 [![GitHub](https://img.shields.io/badge/GitHub-yDiegoRosa-181717?logo=github&logoColor=white)](https://github.com/yDiegoRosa)
