@@ -9,10 +9,10 @@
 [![Plotly](https://img.shields.io/badge/Plotly-6.7%2B-3F4F75?logo=plotly&logoColor=white)](https://plotly.com/python/)
 [![Folium](https://img.shields.io/badge/Folium-0.20%2B-77B829?logo=leaflet&logoColor=white)](https://python-visualization.github.io/folium/)
 [![PBDB](https://img.shields.io/badge/Dados-Paleobiology%20Database-4B9CD3)](https://paleobiodb.org)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://dino-fossil-dashboard.streamlit.app/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22C55E.svg)](LICENSE)
 
-<!-- DEMO: depois do deploy, troque "#demo" abaixo pelo link do Streamlit Cloud (https://<seu-app>.streamlit.app) -->
-**[🔴 Demo ao vivo](#demo) · [💡 Destaques](#-destaques-dos-dados) · [📊 Visualizações](#-visualizações) · [⚙️ Pipeline](#️-pipeline-de-dados) · [⚡ Como rodar](#-como-rodar)**
+**[🔴 Demo ao vivo](https://dino-fossil-dashboard.streamlit.app/) · [💡 Destaques](#-destaques-dos-dados) · [📊 Visualizações](#-visualizações) · [⚙️ Pipeline](#️-pipeline-de-dados) · [⚡ Como rodar](#-como-rodar)**
 
 </div>
 
@@ -24,7 +24,9 @@
      (ou, no editor web do GitHub, arraste o .mp4 para cá — ele gera o link do vídeo automaticamente) -->
 <!-- ![Demonstração do Dino Fossil Dashboard](docs/demo.gif) -->
 
-> 🚧 Deploy no Streamlit Cloud em andamento. Enquanto isso, rode localmente em menos de 2 minutos: veja [Como rodar](#-como-rodar).
+> 🔴 **App publicado no Streamlit Cloud:** [dino-fossil-dashboard.streamlit.app](https://dino-fossil-dashboard.streamlit.app/)
+>
+> Prefere rodar localmente? Veja [Como rodar](#-como-rodar).
 
 ---
 
@@ -258,7 +260,7 @@ O Streamlit Cloud instala só o `requirements.txt`, que traz apenas o necessári
 
 ## 🔭 Próximos passos
 
-- [ ] Publicar o deploy no Streamlit Cloud
+- [x] Publicar o deploy no Streamlit Cloud
 - [ ] Integrar `sitios.json` (formação geológica e ambiente de deposição) ao dataset final
 - [ ] Usar paleocoordenadas para mostrar os fósseis na posição dos continentes da época
 - [ ] Completar os notebooks de exploração, limpeza e visualização
