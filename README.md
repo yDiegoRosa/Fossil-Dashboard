@@ -12,7 +12,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-22C55E.svg)](LICENSE)
 
 <!-- DEMO: depois do deploy, troque "#demo" abaixo pelo link do Streamlit Cloud (https://<seu-app>.streamlit.app) -->
-**[🔴 Demo ao vivo](#demo) · [💡 Destaques](#-destaques-dos-dados) · [📊 Visualizações](#-visualizações) · [⚙️ Pipeline](#️-pipeline-de-dados) · [⚡ Como rodar](#-como-rodar)**
+**[🔴 Demo ao vivo](https://dino-fossil-dashboard.streamlit.app/) · [💡 Destaques](#-destaques-dos-dados) · [📊 Visualizações](#-visualizações) · [⚙️ Pipeline](#️-pipeline-de-dados) · [⚡ Como rodar](#-como-rodar)**
 
 </div>
 
