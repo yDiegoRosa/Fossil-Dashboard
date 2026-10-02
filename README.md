@@ -24,10 +24,6 @@
      (ou, no editor web do GitHub, arraste o .mp4 para cá — ele gera o link do vídeo automaticamente) -->
 <!-- ![Demonstração do Dino Fossil Dashboard](docs/demo.gif) -->
 
-> 🚧 Deploy no Streamlit Cloud em andamento. Enquanto isso, rode localmente em menos de 2 minutos: veja [Como rodar](#-como-rodar).
-
----
-
 ## Sobre o projeto
 
 App interativo em **Streamlit** alimentado por dados reais da **[Paleobiology Database (PBDB)](https://paleobiodb.org)**, uma base científica colaborativa, pública e sem necessidade de autenticação.
